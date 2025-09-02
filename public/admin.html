@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Panel — Firmas parking</title>
+  <style>
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu;max-width:900px;margin:24px auto;padding:0 16px;line-height:1.5}
+    .card{border:1px solid #ddd;border-radius:12px;padding:16px;margin:12px 0}
+    .row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+    a.button{display:inline-block;border:1px solid #222;border-radius:10px;padding:10px 14px;text-decoration:none;color:#111}
+  </style>
+</head>
+<body>
+  <h1>Panel (privado)</h1>
+
+  <div class="card row">
+    <div>Total de firmas: <b id="total">—</b></div>
+    <a class="button" href="/api/sign/export.csv">Descargar CSV</a>
+  </div>
+
+  <script>
+    (async () => {
+      try {
+        const r = await fetch('/api/sign/total', { cache: 'no-store' });
+        const { total } = await r.json();
+        document.getElementById('total').textContent = total;
+      } catch {
+        document.getElementById('total').textContent = 'Error';
+      }
+    })();
+  </script>
+</body>
+</html>
