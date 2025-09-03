@@ -30,7 +30,13 @@ app.disable("x-powered-by");
 // seguridad
 app.use(helmet());
 app.use(mongoSanitize());
-app.use(cors({ origin: true }));
+const allowed = [process.env.APP_ORIGIN || "http://localhost:3000"];
+app.use(cors({
+  origin: (origin, cb) => {
+    if (!origin || allowed.includes(origin)) return cb(null, true);
+    return cb(new Error("Not allowed by CORS"));
+  }
+}));
 
 // parsers
 app.use(express.json());
