@@ -1,192 +1,62 @@
 <!doctype html>
 <html lang="es">
-
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Firma por el parking</title>
+  <title>Firmas por un parking en Comillas</title>
   <style>
-    :root {
-      --bg: #0b0b0c;
-      --card: #111216;
-      --text: #e6e6e6;
-      --muted: #a0a0a0;
-      --primary: #ffffff;
-    }
+    :root { --bg:#0b0b0c; --card:#111216; --text:#e6e6e6; --muted:#a0a0a0; --primary:#ffffff; }
 
-    * {
-      box-sizing: border-box
-    }
-
-    body {
-      margin: 0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu;
-      background: var(--bg);
-      color: var(--text)
-    }
-
-    .wrap {
-      max-width: 780px;
-      margin: 0 auto;
-      padding: 24px;
-      display: flex;
-      flex-direction: column;
-      gap: 24px;
-      min-height: 100vh
-    }
-
-    .card {
-      background: var(--card);
-      border: 1px solid #1c1d22;
-      border-radius: 16px;
-      padding: 20px;
-      box-shadow: 0 4px 24px rgba(0, 0, 0, .35)
-    }
-
-    h1 {
-      margin: 0 0 8px
-    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu;background:var(--bg);color:var(--text)}
+    .wrap{max-width:780px;margin:0 auto;padding:24px;display:flex;flex-direction:column;gap:24px;min-height:100vh}
+    .card{background:var(--card);border:1px solid #1c1d22;border-radius:16px;padding:20px;box-shadow:0 4px 24px rgba(0,0,0,.35)}
+    h1{margin:0 0 8px}
 
     /* inputs normales */
-    label {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      margin: 6px 0
-    }
-
-    input {
-      height: 44px;
-      border-radius: 12px;
-      border: 1px solid #2a2b32;
-      background: #0e0f13;
-      color: var(--text);
-      padding: 0 12px
-    }
-
-    .hp {
-      position: absolute;
-      left: -9999px;
-      opacity: 0
-    }
+    label{display:flex;flex-direction:column;gap:6px;margin:6px 0}
+    input{height:44px;border-radius:12px;border:1px solid #2a2b32;background:#0e0f13;color:var(--text);padding:0 12px}
+    .hp{position:absolute;left:-9999px;opacity:0}
 
     /* fila final: consentimiento + botón a la derecha */
-    .actions {
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      margin-top: 8px;
-      flex-wrap: wrap
-    }
-
-    .actions button {
-      margin: 0;
-      padding: 0 16px
-    }
+    .actions{display:flex;align-items:flex-start;gap:12px;margin-top:8px;flex-wrap:wrap}
+    .actions button{margin:0;padding:0 16px}
 
     /* --- consentimiento: texto + checkbox en línea --- */
-    .actions .consent {
-      flex: 1;
-      margin: 0
+    .actions .consent{flex:1;margin:0}
+    .consent{display:block}
+    .consent span{display:inline;line-height:1.4}
+    .consent input[type="checkbox"]{
+      display:inline-block;vertical-align:-2px;margin-left:8px;
+      width:18px;height:18px;accent-color:var(--primary);cursor:pointer;
     }
 
-    /* empuja el botón a la derecha */
-    .consent {
-      /* OVERRIDES al label global */
-      display: block;
-      /* no flex; usa flujo inline dentro */
-    }
+    button{height:44px;border-radius:12px;border:1px solid #2a2b32;background:var(--primary);color:#000;font-weight:600;cursor:pointer;margin-top:8px}
 
-    .consent span {
-      display: inline;
-      line-height: 1.4
-    }
-
-    .consent input[type="checkbox"] {
-      display: inline-block;
-      /* va justo tras el texto */
-      vertical-align: -2px;
-      margin-left: 8px;
-      width: 18px;
-      height: 18px;
-      accent-color: var(--primary);
-      cursor: pointer;
-    }
-
-    button {
-      height: 44px;
-      border-radius: 12px;
-      border: 1px solid #2a2b32;
-      background: var(--primary);
-      color: #000;
-      font-weight: 600;
-      cursor: pointer;
-      margin-top: 8px
-    }
-
-    small {
-      color: var(--muted)
-    }
-
-    .ok {
-      color: #6de38a
-    }
-
-    .err {
-      color: #ff8a8a
-    }
+    small{color:var(--muted)}
+    .ok{color:#6de38a}
+    .err{color:#ff8a8a}
 
     /* Botones de compartir */
-    .share {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-top: 12px;
+    .share{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+    .btn-share{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:10px 14px;border-radius:999px;border:1px solid #2a2b32;
+      background:#0e0f13;color:var(--text);text-decoration:none;font-weight:600;
+      transition:transform .12s ease, box-shadow .12s ease, border-color .12s ease;
     }
-
-    .btn-share {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 14px;
-      border-radius: 999px;
-      border: 1px solid #2a2b32;
-      background: #0e0f13;
-      color: var(--text);
-      text-decoration: none;
-      font-weight: 600;
-      transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
-    }
-
-    .btn-share:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 6px 20px rgba(0, 0, 0, .25);
-      border-color: #3a3b44;
-    }
-
-    .btn-share .icon {
-      font-size: 18px;
-      line-height: 1;
-    }
-
-    /* toques de marca */
-    .btn-wa {
-      border-color: #2bd26b55;
-    }
-
-    .btn-mail {
-      border-color: #4ea1ff55;
-    }
+    .btn-share:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,0,0,.25);border-color:#3a3b44}
+    .btn-share .icon{font-size:18px;line-height:1}
+    .btn-wa{border-color:#2bd26b55}
+    .btn-mail{border-color:#4ea1ff55}
   </style>
 </head>
-
 <body>
   <main class="wrap">
     <section class="card">
-      <title>Firmas por un parking en Comillas</title>
       <h1>Parking público en Comillas: ¡apoya con tu firma!</h1>
-      <p>Vecinos y vecinas de Comillas solicitamos la creación de un aparcamiento público y accesible junto a las obras.
-        Añade tu firma y apoya la propuesta.</p>
+      <p>Vecinos y vecinas de Comillas solicitamos la creación de un aparcamiento público y accesible junto a las obras. Añade tu firma y apoya la propuesta.</p>
+
       <form id="form" method="post" action="/api/sign">
         <!-- Honeypot: debe quedar vacío -->
         <input type="text" name="website" class="hp" tabindex="-1" autocomplete="off" />
@@ -217,23 +87,22 @@
             </span>
             <input name="consent" type="checkbox" required />
           </label>
-
           <button type="submit">Firmar</button>
+        </div> <!-- 👈 cerramos .actions -->
 
-          <div class="share" aria-label="Compartir">
-            <a id="share-wa" class="btn-share btn-wa" href="#" target="_blank" rel="noopener noreferrer">
-              <span class="icon">📲</span> Compartir por WhatsApp
-            </a>
-            <a id="share-mail" class="btn-share btn-mail" href="#">
-              <span class="icon">✉️</span> Enviar por email
-            </a>
-          </div>
-
-
-          <p id="msg"></p>
-          <small>Responsable: Tú. Conservación: hasta cierre de la iniciativa. Derechos: escríbenos al email indicado en
-            la política.</small>
+        <p id="msg"></p>
+        <small>Responsable: Tú. Conservación: hasta cierre de la iniciativa. Derechos: escríbenos al email indicado en la política.</small>
       </form>
+
+      <!-- Botones de compartir (fuera del form) -->
+      <div class="share" aria-label="Compartir">
+        <a id="share-wa" class="btn-share btn-wa" href="#" target="_blank" rel="noopener noreferrer">
+          <span class="icon">📲</span> Compartir por WhatsApp
+        </a>
+        <a id="share-mail" class="btn-share btn-mail" href="#">
+          <span class="icon">✉️</span> Enviar por email
+        </a>
+      </div>
     </section>
   </main>
 
@@ -267,23 +136,20 @@
     });
   </script>
 
-
- <script>
+  <script>
     // Construye los enlaces de compartir con la URL actual
     (function () {
-      const url = encodeURIComponent(location.origin);
-      const txtWA = encodeURIComponent('Firma esta petición: ');
-      const subj = encodeURIComponent('Parking en Comillas');
-      const body = encodeURIComponent('Apoya la propuesta aquí: ') + '%20' + url;
+      const currentUrl = location.href; // URL completa de la página
+      const waText = 'Firma esta petición: ' + currentUrl;
+      const mailSubject = 'Parking en Comillas';
+      const mailBody = 'Apoya la propuesta aquí: ' + currentUrl;
 
-      document.getElementById('share-wa').href =
-        'https://api.whatsapp.com/send?text=' + txtWA + url;
+      const aWa = document.getElementById('share-wa');
+      const aMail = document.getElementById('share-mail');
 
-      document.getElementById('share-mail').href =
-        'mailto:?subject=' + subj + '&body=' + body;
+      if (aWa) aWa.href = 'https://api.whatsapp.com/send?text=' + encodeURIComponent(waText);
+      if (aMail) aMail.href = 'mailto:?subject=' + encodeURIComponent(mailSubject) + '&body=' + encodeURIComponent(mailBody);
     })();
   </script>
-
 </body>
-
 </html>
