@@ -26,17 +26,12 @@ function adminAuth(req, res, next) {
 /* ------------------------ App ----------------------- */
 const app = express();
 app.disable("x-powered-by");
+// ✅ necesario en Render/hosting con proxy para que rate-limit use la IP real
+app.set("trust proxy", 1);
 
 // seguridad
 app.use(helmet());
 app.use(mongoSanitize());
-const allowed = [process.env.APP_ORIGIN || "http://localhost:3000"];
-app.use(cors({
-  origin: (origin, cb) => {
-    if (!origin || allowed.includes(origin)) return cb(null, true);
-    return cb(new Error("Not allowed by CORS"));
-  }
-}));
 
 // parsers
 app.use(express.json());
@@ -71,6 +66,37 @@ app.get("/admin", adminAuth, (_req, res) => {
 
 // healthcheck
 app.get("/health", (_req, res) => res.json({ ok: true }));
+
+/* ------------ CORS SOLO para la API (/api/**) ------------ */
+// Orígenes permitidos: tu dominio de Render (auto), APP_ORIGIN (opcional) y local
+const renderOrigin =
+  process.env.RENDER_EXTERNAL_URL ||
+  (process.env.RENDER_EXTERNAL_HOSTNAME
+    ? `https://${process.env.RENDER_EXTERNAL_HOSTNAME}`
+    : null);
+
+const allowedOrigins = new Set(
+  [
+    process.env.APP_ORIGIN,     // p.ej. https://parking-comillas.onrender.com (opcional)
+    renderOrigin,               // el que expone Render automáticamente
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+  ].filter(Boolean)
+);
+
+const corsOptions = {
+  origin(origin, cb) {
+    // Permite peticiones sin Origin (navegación directa/same-origin/curl)
+    if (!origin) return cb(null, true);
+    if (allowedOrigins.has(origin)) return cb(null, true);
+    return cb(new Error("Not allowed by CORS"));
+  },
+};
+
+// 👉 aplica CORS solo a la API (no a estáticos ni páginas)
+app.use("/api", cors(corsOptions));
+// preflight
+app.options("/api/*", cors(corsOptions));
 
 // API firmas
 app.use("/api/sign", signaturesRouter);
