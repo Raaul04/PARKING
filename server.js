@@ -1,7 +1,6 @@
 import express from "express";
 import mongoose from "mongoose";
 import helmet from "helmet";
-// ❌ import cors from "cors";  // ya no lo usamos
 import rateLimit from "express-rate-limit";
 import mongoSanitize from "express-mongo-sanitize";
 import path from "node:path";
@@ -26,25 +25,48 @@ function adminAuth(req, res, next) {
 /* ------------------------ App ----------------------- */
 const app = express();
 app.disable("x-powered-by");
-// ✅ necesario en Render para que rate-limit use la IP real
+// necesario en Render para que rate-limit identifique la IP real
 app.set("trust proxy", 1);
 
 // seguridad
 app.use(helmet());
+if (process.env.NODE_ENV === "production") {
+  // fuerza HTTPS en navegadores
+  app.use(helmet.hsts({ maxAge: 15552000 })); // ~180 días
+}
 app.use(mongoSanitize());
 
-// parsers
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// parsers (con límite para evitar floods)
+app.use(express.json({ limit: "20kb" }));
+app.use(express.urlencoded({ extended: true, limit: "20kb" }));
 
 // rate limit (anti-spam global)
-const limiter = rateLimit({
+const globalLimiter = rateLimit({
   windowMs: 60 * 1000,
   max: 100,
   standardHeaders: true,
   legacyHeaders: false,
 });
-app.use(limiter);
+app.use(globalLimiter);
+
+// límites específicos
+const signLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 min
+  max: 5,              // 5 firmas/min/IP
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { ok: false, error: "Demasiadas firmas seguidas. Inténtalo en 1 minuto." },
+});
+app.use("/api/sign", signLimiter);
+
+const adminLimiter = rateLimit({
+  windowMs: 5 * 60 * 1000, // 5 min
+  max: 30,                 // 30 req / 5 min / IP
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: "Too many requests",
+});
+app.use("/admin", adminLimiter);
 
 // estáticos (landing en /public)
 const __filename = fileURLToPath(import.meta.url);
@@ -67,8 +89,23 @@ app.get("/admin", adminAuth, (_req, res) => {
 // healthcheck
 app.get("/health", (_req, res) => res.json({ ok: true }));
 
-// API firmas (sin CORS extra; mismo origen)
+// API firmas (mismo origen; no necesitamos CORS)
 app.use("/api/sign", signaturesRouter);
+
+// 404 sencillo
+app.use((req, res, next) => {
+  if (req.path.startsWith("/api/")) return res.status(404).json({ ok: false, error: "No encontrado" });
+  return res.status(404).send("No encontrado");
+});
+
+// manejador de errores (evita 500 feos)
+app.use((err, req, res, next) => {
+  console.error("❌ Unhandled error:", err);
+  if (req.path.startsWith("/api/")) {
+    return res.status(500).json({ ok: false, error: "Error de servidor" });
+  }
+  return res.status(500).send("Error de servidor");
+});
 
 /* ---------------------- Mongo & boot ---------------------- */
 const PORT = process.env.PORT || 3000;
