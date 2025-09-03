@@ -90,8 +90,11 @@
       margin: 0
     }
 
+    /* empuja el botón a la derecha */
     .consent {
-      display: block
+      /* OVERRIDES al label global */
+      display: block;
+      /* no flex; usa flujo inline dentro */
     }
 
     .consent span {
@@ -101,6 +104,7 @@
 
     .consent input[type="checkbox"] {
       display: inline-block;
+      /* va justo tras el texto */
       vertical-align: -2px;
       margin-left: 8px;
       width: 18px;
@@ -131,58 +135,16 @@
     .err {
       color: #ff8a8a
     }
-
-    /* ===== Botones de compartir (bonitos) ===== */
-    /* Compartir */
-    .share {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-top: 10px
-    }
-
-    .btn-share {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 14px;
-      border-radius: 999px;
-      font-weight: 600;
-      text-decoration: none;
-      color: var(--text);
-      border: 1px solid #2a2b32;
-      background: #0e0f13;
-      transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
-    }
-
-    .btn-share:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 6px 20px rgba(0, 0, 0, .25);
-      border-color: #3a3b44
-    }
-
-    .btn-share .icon {
-      font-size: 18px;
-      line-height: 1
-    }
-
-    .btn-wa {
-      border-color: #25d36666
-    }
-
-    .btn-mail {
-      border-color: #4ea1ff66
-    }
   </style>
 </head>
 
 <body>
   <main class="wrap">
     <section class="card">
+      <title>Firmas por un parking en Comillas</title>
       <h1>Parking público en Comillas: ¡apoya con tu firma!</h1>
       <p>Vecinos y vecinas de Comillas solicitamos la creación de un aparcamiento público y accesible junto a las obras.
         Añade tu firma y apoya la propuesta.</p>
-
       <form id="form" method="post" action="/api/sign">
         <!-- Honeypot: debe quedar vacío -->
         <input type="text" name="website" class="hp" tabindex="-1" autocomplete="off" />
@@ -205,6 +167,7 @@
         </label>
 
         <div class="actions">
+          <!-- Texto con checkbox al final -->
           <label class="consent">
             <span>
               Acepto la <a href="/privacidad.html" target="_blank" rel="noopener noreferrer">Política de Privacidad</a>
@@ -213,16 +176,18 @@
             <input name="consent" type="checkbox" required />
           </label>
 
-          <button type="submit">Firmar</button>
+          <!-- Compartir (sin JS) -->
+          <div style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap">
+            <a href="https://wa.me/?text=Firma%20esta%20petici%C3%B3n:%20https%3A%2F%2FTU-URL" target="_blank"
+              rel="noopener"
+              style="display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:999px;border:1px solid #25d36666;background:#0e0f13;color:#e6e6e6;text-decoration:none;font-weight:600">📲
+              WhatsApp</a>
 
-          <div class="share" aria-label="Compartir">
-            <a id="share-wa" class="btn-share btn-wa" href="#" rel="noopener">
-              <span class="icon">📲</span> WhatsApp
-            </a>
-            <a id="share-mail" class="btn-share btn-mail" href="#">
-              <span class="icon">✉️</span> Email
-            </a>
+            <a href="mailto:?subject=Parking%20en%20Comillas&body=Apoya%20la%20propuesta%20aqu%C3%AD:%20https%3A%2F%2FTU-URL"
+              style="display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:999px;border:1px solid #4ea1ff66;background:#0e0f13;color:#e6e6e6;text-decoration:none;font-weight:600">✉️
+              Email</a>
           </div>
+
 
         </div>
 
@@ -262,31 +227,6 @@
       }
     });
   </script>
-
-  <script>
-    // Enlaces de compartir: construidos al hacer clic (móvil y PC)
-    (function () {
-      var currentUrl = location.href.split('#')[0]; // sin hash por si acaso
-      var wa = document.getElementById('share-wa');
-      var mail = document.getElementById('share-mail');
-
-      if (wa) wa.addEventListener('click', function (e) {
-        e.preventDefault();
-        var text = 'Firma esta petición: ' + currentUrl;
-        var link = 'https://wa.me/?text=' + encodeURIComponent(text);
-        window.location.href = link; // app en móvil / Web en PC
-      });
-
-      if (mail) mail.addEventListener('click', function (e) {
-        e.preventDefault();
-        var subject = 'Parking en Comillas';
-        var body = 'Apoya la propuesta aquí: ' + currentUrl;
-        var link = 'mailto:?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
-        window.location.href = link;
-      });
-    })();
-  </script>
-
 </body>
 
 </html>
