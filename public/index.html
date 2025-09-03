@@ -1,50 +1,150 @@
 <!doctype html>
 <html lang="es">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Firma por el parking</title>
   <style>
-    :root { --bg:#0b0b0c; --card:#111216; --text:#e6e6e6; --muted:#a0a0a0; --primary:#ffffff; }
-
-    *{box-sizing:border-box}
-    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu;background:var(--bg);color:var(--text)}
-    .wrap{max-width:780px;margin:0 auto;padding:24px;display:flex;flex-direction:column;gap:24px;min-height:100vh}
-    .card{background:var(--card);border:1px solid #1c1d22;border-radius:16px;padding:20px;box-shadow:0 4px 24px rgba(0,0,0,.35)}
-    h1{margin:0 0 8px}
-
-    /* inputs normales */
-    label{display:flex;flex-direction:column;gap:6px;margin:6px 0}
-    input{height:44px;border-radius:12px;border:1px solid #2a2b32;background:#0e0f13;color:var(--text);padding:0 12px}
-    .hp{position:absolute;left:-9999px;opacity:0}
-
-    /* fila final: consentimiento + botón a la derecha */
-    .actions{display:flex;align-items:flex-start;gap:12px;margin-top:8px;flex-wrap:wrap}
-    .actions button{margin:0;padding:0 16px}
-
-    /* --- consentimiento: texto + checkbox en línea --- */
-    .actions .consent{flex:1;margin:0}
-    .consent{display:block} /* no flex: pone checkbox al final del texto */
-    .consent span{display:inline;line-height:1.4}
-    .consent input[type="checkbox"]{
-      display:inline-block;vertical-align:-2px;margin-left:8px;
-      width:18px;height:18px;accent-color:var(--primary);cursor:pointer;
+    :root {
+      --bg: #0b0b0c;
+      --card: #111216;
+      --text: #e6e6e6;
+      --muted: #a0a0a0;
+      --primary: #ffffff;
     }
 
-    button{height:44px;border-radius:12px;border:1px solid #2a2b32;background:var(--primary);color:#000;font-weight:600;cursor:pointer;margin-top:8px}
+    * {
+      box-sizing: border-box
+    }
 
-    small{color:var(--muted)}
-    .ok{color:#6de38a}
-    .err{color:#ff8a8a}
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu;
+      background: var(--bg);
+      color: var(--text)
+    }
+
+    .wrap {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      min-height: 100vh
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid #1c1d22;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, .35)
+    }
+
+    h1 {
+      margin: 0 0 8px
+    }
+
+    /* inputs normales */
+    label {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin: 6px 0
+    }
+
+    input {
+      height: 44px;
+      border-radius: 12px;
+      border: 1px solid #2a2b32;
+      background: #0e0f13;
+      color: var(--text);
+      padding: 0 12px
+    }
+
+    .hp {
+      position: absolute;
+      left: -9999px;
+      opacity: 0
+    }
+
+    /* fila final: consentimiento + botón a la derecha */
+    .actions {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-top: 8px;
+      flex-wrap: wrap
+    }
+
+    .actions button {
+      margin: 0;
+      padding: 0 16px
+    }
+
+    /* --- consentimiento: texto + checkbox en línea --- */
+    .actions .consent {
+      flex: 1;
+      margin: 0
+    }
+
+    /* empuja el botón a la derecha */
+    .consent {
+      /* OVERRIDES al label global */
+      display: block;
+      /* no flex; usa flujo inline dentro */
+    }
+
+    .consent span {
+      display: inline;
+      line-height: 1.4
+    }
+
+    .consent input[type="checkbox"] {
+      display: inline-block;
+      /* va justo tras el texto */
+      vertical-align: -2px;
+      margin-left: 8px;
+      width: 18px;
+      height: 18px;
+      accent-color: var(--primary);
+      cursor: pointer;
+    }
+
+    button {
+      height: 44px;
+      border-radius: 12px;
+      border: 1px solid #2a2b32;
+      background: var(--primary);
+      color: #000;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 8px
+    }
+
+    small {
+      color: var(--muted)
+    }
+
+    .ok {
+      color: #6de38a
+    }
+
+    .err {
+      color: #ff8a8a
+    }
   </style>
 </head>
+
 <body>
   <main class="wrap">
     <section class="card">
+      <title>Firmas por un parking en Comillas</title>
       <h1>Parking público en Comillas: ¡apoya con tu firma!</h1>
       <p>Vecinos y vecinas de Comillas solicitamos la creación de un aparcamiento público y accesible junto a las obras.
         Añade tu firma y apoya la propuesta.</p>
-
       <form id="form" method="post" action="/api/sign">
         <!-- Honeypot: debe quedar vacío -->
         <input type="text" name="website" class="hp" tabindex="-1" autocomplete="off" />
@@ -78,20 +178,19 @@
 
           <button type="submit">Firmar</button>
 
-          <!-- Compartir (misma estética minimal) -->
           <p style="margin-top:10px">
-            <a id="share-wa" href="#" target="_blank" rel="noopener" style="color:#fff;text-decoration:underline">
-              Compartir por WhatsApp
-            </a>
+            <a href="https://api.whatsapp.com/send?text=Firma%20esta%20petici%C3%B3n%3A%20https://TU-DOMINIO-O-URL-RENDER"
+              target="_blank" rel="noopener" style="color:#fff;text-decoration:underline">Compartir por WhatsApp</a>
             &nbsp;·&nbsp;
-            <a id="share-mail" href="#" style="color:#fff;text-decoration:underline">
-              Enviar por email
-            </a>
+            <a href="mailto:?subject=Parking%20en%20Comillas&body=Apoya%20la%20propuesta%20aqu%C3%AD%3A%20https://TU-DOMINIO-O-URL-RENDER"
+              style="color:#fff;text-decoration:underline">Enviar por email</a>
           </p>
+
         </div>
 
         <p id="msg"></p>
-        <small>Responsable: Tú. Conservación: hasta cierre de la iniciativa. Derechos: escríbenos al email indicado en la política.</small>
+        <small>Responsable: Tú. Conservación: hasta cierre de la iniciativa. Derechos: escríbenos al email indicado en
+          la política.</small>
       </form>
     </section>
   </main>
@@ -125,38 +224,6 @@
       }
     });
   </script>
-
-  <script>
-    // Enlaces de compartir que SIEMPRE funcionan (se construyen al hacer clic)
-    (function () {
-      const wa = document.getElementById('share-wa');
-      const mail = document.getElementById('share-mail');
-
-      if (wa) wa.addEventListener('click', function (e) {
-        e.preventDefault();
-        const pageUrl = location.href;
-        const waText = 'Firma esta petición: ' + pageUrl;
-
-        // wa.me funciona en móvil (abre app) y en PC (abre WhatsApp Web)
-        const link = 'https://wa.me/?text=' + encodeURIComponent(waText);
-
-        // abre en la misma pestaña (más fiable que target=_blank en algunos navegadores)
-        window.location.href = link;
-      });
-
-      if (mail) mail.addEventListener('click', function (e) {
-        e.preventDefault();
-        const pageUrl = location.href;
-        const mailSubject = 'Parking en Comillas';
-        const mailBody = 'Apoya la propuesta aquí: ' + pageUrl;
-
-        const link = 'mailto:?subject=' + encodeURIComponent(mailSubject) +
-                     '&body=' + encodeURIComponent(mailBody);
-
-        // mailto se maneja mejor en la misma pestaña/ventana
-        window.location.href = link;
-      });
-    })();
-  </script>
 </body>
+
 </html>
